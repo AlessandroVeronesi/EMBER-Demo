@@ -12,12 +12,14 @@ WORKDIR /work
 # Copy repo (includes the library submodule content if checked out)
 COPY . /work
 
+# in builder stage
+COPY --from=private_pkg . /src/private_pkg
+
 # Build & install the OSS library into /opt/ember
 # Assumes CMake-based library.
 RUN cmake -S /work/libs/ember -B /tmp/ember-build -G Ninja \
       -DCMAKE_BUILD_TYPE=Release \
       -DCMAKE_INSTALL_PREFIX=/opt/ember \
-        -DBUILD_EXAMPLES=ON \
     && cmake --build /tmp/ember-build \
     && cmake --install /tmp/ember-build
 
