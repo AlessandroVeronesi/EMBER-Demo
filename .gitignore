@@ -3,7 +3,12 @@ __pycache__/
 *.py[codz]
 *$py.class
 
+# C build folders
+build*/
+libs/examples/
+
 # C extensions
+*.exe
 *.so
 
 # Distribution / packaging

@@ -1,0 +1,3 @@
+[submodule "libs/ember"]
+	path = libs/ember
+	url = git@github.com:IHP-Neuromorphic/EMBER.git
