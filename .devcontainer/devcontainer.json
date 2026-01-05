@@ -1,0 +1,24 @@
+{
+  "name": "Local Test (Prebuilt Image)",
+  "image": "course-env:test",
+
+  "workspaceFolder": "/work",
+  "workspaceMount": "source=${localWorkspaceFolder},target=/work,type=bind",
+
+  "overrideCommand": true,
+
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "ms-vscode.cpptools",
+        "ms-vscode.cmake-tools",
+        "ms-python.python"
+      ]
+    }
+  },
+
+  "remoteEnv": {
+    "VIRTUAL_ENV": "/opt/venv",
+    "PATH": "/opt/venv/bin:${containerEnv:PATH}"
+  }
+}

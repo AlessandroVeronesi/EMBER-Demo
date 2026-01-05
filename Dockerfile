@@ -9,13 +9,12 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     && rm -rf /var/lib/apt/lists/*
 
 # --- Prepare Workspace --- #
-WORKDIR /work
-# COPY ./ember_lab/ /work
-COPY . /work
+WORKDIR /work/home
+COPY ./ember_lab/ /work/home
 
 # --- Build and Install EMBER --- #
-# COPY ./libs/ /srcs
-RUN cmake -S /work/libs/ember -B /tmp/ember-build -G Ninja \
+COPY ./libs /work
+RUN cmake -S /work/ember -B /tmp/ember-build -G Ninja \
       -DCMAKE_BUILD_TYPE=Release \
       -DCMAKE_INSTALL_PREFIX=/opt/ember \
     && cmake --build /tmp/ember-build \
@@ -29,7 +28,7 @@ RUN echo "/opt/ember/lib" > /etc/ld.so.conf.d/ember.conf && ldconfig
 ENV VIRTUAL_ENV=/opt/venv
 ENV PATH="${VIRTUAL_ENV}/bin:${PATH}"
 
-# COPY ./nvdla-src/ /srcs
+COPY ./nvdla-src/ /work
 
 # Create venv + upgrade build tooling
 RUN python3 -m venv "${VIRTUAL_ENV}" \
@@ -41,9 +40,7 @@ RUN python3 -m venv "${VIRTUAL_ENV}" \
     && "${VIRTUAL_ENV}/bin/pip" install --no-cache-dir -U pip torch \
     && "${VIRTUAL_ENV}/bin/pip" install --no-cache-dir -U pip torchvision
 
-# RUN "${VIRTUAL_ENV}/bin/pip" install --no-cache-dir -r /work/requirements.txt 
-
-ARG PY_EXT_PATH=/work/nvdla-src/nvdla-ember/
+ARG PY_EXT_PATH=/work/nvdla-ember/
 RUN "${VIRTUAL_ENV}/bin/pip" install --no-cache-dir "${PY_EXT_PATH}"
 
 ##############################################################
