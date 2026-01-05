@@ -45,12 +45,12 @@ int main(int argc, char* argv[])
             reglist[it]->clearAllMasks();
         }
 
-        // // --- Generate SEU Fault --- //
-        // ember::time_t<long unsigned> itime = static_cast<long unsigned>(ember::math::random::uniform(int(dut_warmup.getSimTime()+1), int(SIMTIME-1)));
-        // size_t pos = ember::math::random::uniform((size_t)0, reglist.size()); // ember rand int uniform is in [start, end)
-        // ember::ISaboteur* loc = reglist[pos];
-        // ember::fault::seu_t<long unsigned> mySeu(itime, loc);
-        // std::cout << ">> Generated Fault: " << mySeu << std::endl;
+        // --- Generate SEU Fault --- //
+        ember::time_t<long unsigned> itime = static_cast<long unsigned>(ember::math::random::uniform(int(dut_warmup.getSimTime()+1), int(SIMTIME-1)));
+        size_t pos = ember::math::random::uniform((size_t)0, reglist.size()); // ember rand int uniform is in [start, end)
+        ember::ISaboteur* loc = reglist[pos];
+        ember::fault::seu_t<long unsigned> mySeu(itime, loc);
+        std::cout << ">> Generated Fault: " << mySeu << std::endl;
 
 
         // --- Core Simulation Routine --- //
@@ -62,12 +62,12 @@ int main(int argc, char* argv[])
             dut->update();
             dut->eval();
 
-            // // --- Inject SEU Fault (at the right time) --- //
-            // if (mySeu.time() == tick) {
-            //     std::cout << ">> SimTime = " << tick << ": \033[1;31minjecting fault " << mySeu << "\033[0m" << std::endl;
-            //     mySeu.location()->genFaultMask(mySeu.fmodel());
-            //     mySeu.location()->applyAllFaults();
-            // }
+            // --- Inject SEU Fault (at the right time) --- //
+            if (mySeu.time() == tick) {
+                std::cout << ">> SimTime = " << tick << ": \033[1;31minjecting fault " << mySeu << "\033[0m" << std::endl;
+                mySeu.location()->genFaultMask(mySeu.fmodel());
+                mySeu.location()->applyAllFaults();
+            }
 
 
             // --- Monitor Display --- //

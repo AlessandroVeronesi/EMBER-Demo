@@ -20,7 +20,7 @@ public:
     ember::outPort<T> C;
 
     // Connectivity Helper
-    // void connect(ember::port<T>* _A, ember::port<T>* _B);
+    void connect(ember::port<T>* _A, ember::port<T>* _B);
 
     // EMBER Methods
     const char* id();

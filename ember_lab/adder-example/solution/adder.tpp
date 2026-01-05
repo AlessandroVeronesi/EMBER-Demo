@@ -13,7 +13,7 @@ const char* debug::adder<T>::id()
 template<typename T>
 void debug::adder<T>::reset()
 {
-    // TODO: ...
+    // Do Noting: Combinational component
 }
 
 template<typename T>
@@ -27,22 +27,22 @@ std::vector<ember::ISaboteur*> debug::adder<T>::getSaboteurs()
 template<typename T>
 void debug::adder<T>::update()
 {
-    // TODO: ...
+    // Do Noting: Combinational component
 }
     
 template<typename T>
 void debug::adder<T>::eval()
 {
-    // TODO: ...
+    C.write(A.read() + B.read());
 }
     
-// template<typename T>
-// void debug::adder<T>::connect(ember::port<T>* _A, ember::port<T>* _B)
-// {
-//     A.bind(*_A);
-//     B.bind(*_B);
-//     C.bind();
-// }
+template<typename T>
+void debug::adder<T>::connect(ember::port<T>* _A, ember::port<T>* _B)
+{
+    A.bind(*_A);
+    B.bind(*_B);
+    C.bind();
+}
 
 template<typename T>
 debug::adder<T>::adder(const char* _id, const size_t bitwidth_a, const size_t bitwidth_b)

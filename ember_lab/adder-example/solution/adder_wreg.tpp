@@ -15,7 +15,8 @@ const char* debug::adder_wreg<T>::id()
 template<typename T>
 void debug::adder_wreg<T>::reset()
 {
-    // TODO: ...
+    outreg.reset();
+    comb_add->reset();
 }
 
 template<typename T>
@@ -29,13 +30,16 @@ std::vector<ember::ISaboteur*> debug::adder_wreg<T>::getSaboteurs()
 template<typename T>
 void debug::adder_wreg<T>::update()
 {
-    // TODO: ...
+    outreg.update();
+    comb_add->update();
 }
 
 template<typename T>
 void debug::adder_wreg<T>::eval()
 {
-    // TODO: ...
+    // --- Manual Topological Ordering Required --- //
+    outreg.eval();
+    comb_add->eval();
 }
 
 
@@ -53,7 +57,17 @@ debug::adder_wreg<T>::adder_wreg(const char* _id, const size_t bitwidth_a, const
     // Instantiate Sub Component
     comb_add = new debug::adder<T>("U", inBwA, inBwB);
 
-    // TODO: ...
+    // External Self Bound Ports
+    A.bind();
+    B.bind();
+    outreg.dout.bind();
+
+    // Internal Connections
+    comb_add->A.bind(A);
+    comb_add->B.bind(B);
+
+    outreg.din.bind(comb_add->C);
+    C.bind(outreg.dout);
 }
 
 template<typename T>
