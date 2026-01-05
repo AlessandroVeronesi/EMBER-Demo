@@ -1,0 +1,40 @@
+
+name: "nvdla"
+dat-type: "int8"
+wt-type: "int8"
+truncate: False
+# sim-timeout: 35000 # Timeout for Static Benchmark
+sim-timeout: 0
+inject:
+  datapath: True
+  ctrlpath: True
+host-system:
+  datmem-size: 268435456
+  wtmem-size:  603979776
+  sdpmem-size: 8388608
+  outmem-size: 268435456
+cbuf:
+  datbuf:
+    num-banks: 16
+    bank-depth: 1024
+    wordsize: 32
+  wtbuf:
+    num-banks: 64
+    bank-depth: 1024
+    wordsize: 32
+cmac:
+  batch-size: 8
+  atomic-c: 64
+  atomic-k: 16
+  mac-pipelined: True
+cacc:
+  extra-bits: 6
+  num-banks: 64
+  bank-depth: 1024
+  wordsize: 136
+sdp:
+  num-stages: 2
+  alu-pipelined: True
+axi-dbb:
+  wordsize: 512
+  latency: 1200

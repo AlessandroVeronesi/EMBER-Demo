@@ -23,16 +23,6 @@ MAXDILATION  = 5
 
 ##############################
 
-# def dilation_workaround(tensor, dilation):
-#     K, C, H, W = tensor.shape
-#     H_ = (H-1)*dilation[0] +1
-#     W_ = (W-1)*dilation[1] +1
-#     dTensor = np.zeros((K,C,H_,W_), dtype=tensor.dtype)
-#     dTensor[:,:,::dilation[0],::dilation[1]] = tensor
-#     return dTensor
-
-##############################
-
 units=[
     'top',
     'top.conv',
@@ -178,6 +168,7 @@ def testroutine(nvdla, dbgcfg, layerid, dutlayer, dbglayer, testnum, funit, fsta
 
     for testit in range(testnum):
 
+        ## Random Benchmark
         input_gen_exit = False
         while(not input_gen_exit):
             stride   = ((randval(MAXSTRIDE-1)   +1), (randval(MAXSTRIDE-1)   +1))
@@ -202,7 +193,8 @@ def testroutine(nvdla, dbgcfg, layerid, dutlayer, dbglayer, testnum, funit, fsta
             if((H_>0) and (W_>0) and (H>0) and (W>0) and (R_>0) and (S_>0)):
                 input_gen_exit = True
 
-        # # Static Benchmark #1
+
+        ## Static Benchmark
         # K = MAXK
         # R = 5
         # S = 3
@@ -216,34 +208,7 @@ def testroutine(nvdla, dbgcfg, layerid, dutlayer, dbglayer, testnum, funit, fsta
         # padding  = (1,0)
         # dilation = (1,1)
 
-        # # Static Benchmark #2
-        # K = 191
-        # R = 2
-        # S = 3
-
-        # B = 5
-        # C = 8
-        # H = 15
-        # W = 18
-
-        # stride   = (1,1)
-        # padding  = (0,0)
-        # dilation = (1,1)
-
-        # # Static Benchmark #3
-        # K = MAXK
-        # R = 2
-        # S = 2
-
-        # B = MAXB
-        # C = MAXC
-        # H = 7
-        # W = 7
-
-        # stride   = (1,1)
-        # padding  = (0,0)
-        # dilation = (2,2)
-
+        # Random Data
         if(isFloat(dbgcfg)):
             Fmap = np.random.uniform(-10,10, (B,C,H,W)).astype(np.float32)
             Kmap = np.random.uniform(-10,10, (K,C,R,S)).astype(np.float32)
@@ -253,6 +218,7 @@ def testroutine(nvdla, dbgcfg, layerid, dutlayer, dbglayer, testnum, funit, fsta
             Kmap = np.random.randint(-10,10, (K,C,R,S), dtype=np.int64)
             Bias = np.random.randint(-10,10, K, dtype=np.int64)
 
+        # Display Inputs
         print('-I: Running Test with:')
         print(f'-I: Layer    = {layerid}')
         print(f'-I: Fmap     = {Fmap.shape}')
@@ -261,8 +227,6 @@ def testroutine(nvdla, dbgcfg, layerid, dutlayer, dbglayer, testnum, funit, fsta
         print(f'-I: Stride   = {stride}')
         print(f'-I: Padding  = {padding}')
         print(f'-I: Dilation = {dilation}')
-
-        # print(input("Waiting user input... "))
 
         if verbose:
             print('-I: inputs tensor is:')
@@ -274,20 +238,19 @@ def testroutine(nvdla, dbgcfg, layerid, dutlayer, dbglayer, testnum, funit, fsta
                 print(Bias)
 
         print(f'-I: debug {layerid}')
+
+        # Calculating Golden Output
         golden = dbglayer(Fmap, Kmap, Bias, stride, padding, dilation)
 
-        # # Dilation Workaround
-        # dummy_dilation = (1,1)
-        # dKmap = dilation_workaround(Kmap, dilation)
-
-
         if not seu:
+
+            # Baseline Execution
             print(f'-I: dut {layerid}')
             start  = datetime.now()
             dut    = dutlayer(nvdla, Fmap, Kmap, Bias, stride, padding, dilation, logfile=f'{layerid}{testit}.yaml')
-            # dut    = dutlayer(nvdla, Fmap, dKmap, Bias, stride, padding, dummy_dilation, logfile=f'{layerid}{testit}.yaml')
             stop   = datetime.now()
 
+            # Check Output
             if((golden.shape == dut.shape) and np.allclose(golden, dut, rtol=args.threshold)):
                 print(f'-I: {layerid} 4D test {testit} PASSED (elapsed: {(stop-start).total_seconds()*1000} ms)')
                 if verbose:
@@ -323,6 +286,8 @@ def testroutine(nvdla, dbgcfg, layerid, dutlayer, dbglayer, testnum, funit, fsta
                                 print(f'-E: {layerid} 4D test {testit} FAILED')
                                 sys.exit('-E: DEBUG  FAILED')
         else:
+
+            # SEU Injection
             print(f'-I: Injecting location: {funit} with {nvdla.get_regs(funit)} locations...')
 
             print(f'-I: dut {layerid} seu')
@@ -348,6 +313,7 @@ def testroutine(nvdla, dbgcfg, layerid, dutlayer, dbglayer, testnum, funit, fsta
             print(f'-I(test {testit}): printing errors:', numErrors)
 
 ##############################
+## CLI
 
 parser = argparse.ArgumentParser()
 
@@ -375,7 +341,7 @@ if (args.saf and args.seu):
 
 pid = os.getpid()
 
-dbgcfg = os.path.join(os.path.dirname(__file__), '..', 'specs', 'debug16_int8.yaml')
+dbgcfg = os.path.join(os.path.dirname(__file__), 'nvdla_int8.yaml')
 
 if args.config is not None:
     dbgcfg = args.config
