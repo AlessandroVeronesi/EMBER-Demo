@@ -1,1 +1,1 @@
-docker build -t ember-lab .
+docker build -t ember-demo .

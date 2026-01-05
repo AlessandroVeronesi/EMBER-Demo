@@ -1,6 +1,6 @@
 {
   "name": "Local Test (Prebuilt Image)",
-  "image": "ember-lab:latest",
+  "image": "ember-demo:latest",
   "workspaceFolder": "/work/home",
   "workspaceMount": "source=${localWorkspaceFolder},target=/work/home,type=bind",
   "overrideCommand": true,
