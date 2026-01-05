@@ -1,12 +1,9 @@
 {
   "name": "Local Test (Prebuilt Image)",
-  "image": "course-env:test",
-
-  "workspaceFolder": "/work",
-  "workspaceMount": "source=${localWorkspaceFolder},target=/work,type=bind",
-
+  "image": "ember-lab:latest",
+  "workspaceFolder": "/work/home",
+  "workspaceMount": "source=${localWorkspaceFolder},target=/work/home,type=bind",
   "overrideCommand": true,
-
   "customizations": {
     "vscode": {
       "extensions": [
