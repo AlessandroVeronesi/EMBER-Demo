@@ -6,6 +6,7 @@ __pycache__/
 # C build folders
 build*/
 libs/examples/
+nvdla-*/
 
 # C extensions
 *.exe
