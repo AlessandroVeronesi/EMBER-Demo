@@ -10,8 +10,12 @@ nvdla-src/
 data/
 
 # C extensions
+*ember-adder-example
 *.exe
 *.so
+
+# Project Folders
+.vscode/
 
 # Distribution / packaging
 .Python
